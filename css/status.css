@@ -1,0 +1,12 @@
+.table-center th {
+	vertical-align: middle;
+	text-align: center;
+}
+.table-center td {
+	vertical-align: middle;
+	text-align: center;
+}
+.custombar {
+	height: 15px;
+	margin-bottom: 0px;
+}
