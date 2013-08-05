@@ -4,7 +4,7 @@ require_once "includes/template.php";
 require_once "includes/database.php";
 require_once "includes/functions.php";
 
-$dbs = $db->prepare('SELECT servers.name,servers.provider,stats.* FROM servers, stats WHERE stats.serverid = servers.id AND stats.id = (SELECT id FROM stats WHERE serverid = servers.id ORDER BY time DESC LIMIT 1)');
+$dbs = $db->prepare('SELECT servers.id,servers.name,servers.provider,stats.* FROM servers, stats WHERE stats.serverid = servers.id');
 $dbs->execute();
 
 $providerq = $db->prepare('SELECT id, shortname, name FROM providers');
@@ -21,16 +21,14 @@ uasort($providers, 'sort_providers');
 
 $servers = $dbs->fetchAll(PDO::FETCH_OBJ);
 
-$extraq = $db->prepare('SELECT time,interfaces FROM stats WHERE serverid = ? ORDER BY time DESC LIMIT 1, 1');
-
 foreach($servers as $server) {
 	if(!empty($config['display']['nobuffers'])) {
 		$server->memused -= $server->membuffers;
 	}
 	if(!empty($server->interfaces)) {
-		$json = json_decode($server->interfaces);
+		// TODO Get this from the rrd now?
+		/*$json = json_decode($server->interfaces);
 	
-		// TODO add in an 'interfaces' field on the servers table? And of course optimize this.
 		$keys = array_keys(get_object_vars($json));
 		$idata = $json->$keys[0];
 		
@@ -44,7 +42,7 @@ foreach($servers as $server) {
 		
 		//Idx 0 = rx, 8 = tx
 		$server->netin = humansize(intval(bcdiv(bcsub($idata[0], $idata2[0]), $server->time - $r->time)));
-		$server->netout = humansize(intval(bcdiv(bcsub($idata[8], $idata2[8]), $server->time - $r->time)));
+		$server->netout = humansize(intval(bcdiv(bcsub($idata[8], $idata2[8]), $server->time - $r->time)));*/
 	}
 	$providers[$server->provider]->servers[] = $server;
 }

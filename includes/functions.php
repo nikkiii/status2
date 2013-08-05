@@ -21,4 +21,36 @@ function humansize($size) {
     }
     return round($size, 2) . ' ' . $units[$i];
 }
+
+/**
+ * Check if a filesystem is a valid listable type
+ * @param $fs
+ */
+function accept_fs($fs) {
+	global $config;
+	if(preg_match('/\/dev\/[hvs]d/', $fs))
+		return true;
+	
+	return in_array($fs, $config['accepted_fs']);
+}
+
+function parse_uri($uri=false) {
+	if(!$uri) {
+		$uri = $_SERVER['REQUEST_URI'];
+		if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0) {
+			$uri = substr($uri, strlen($_SERVER['SCRIPT_NAME']));
+		} elseif (strpos($uri, dirname($_SERVER['SCRIPT_NAME'])) === 0) {
+			$uri = substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME'])));
+		}
+	}
+	$segments = array();
+	foreach (explode("/", preg_replace("|/*(.+?)/*$|", "\\1", $uri)) as $val) {
+		// Filter segments for security
+		$val = trim($val);
+		if($val != '') {
+			$segments[] = $val;
+		}
+	}
+	return $segments;
+}
 ?>

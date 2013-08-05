@@ -1,4 +1,5 @@
 <?php
+// TODO turn this into a controller
 $base = dirname(dirname(__FILE__));
 
 $themes = array();
