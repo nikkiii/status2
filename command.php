@@ -5,9 +5,6 @@ require_once "includes/rrd.php";
 
 $result = json_decode(file_get_contents("php://input"));
 
-echo 'UID : ' . $result->uid . PHP_EOL;
-echo 'Passkey : ' . sha1($result->key) . PHP_EOL;
-
 $query = $db->prepare("SELECT id, rrdstep FROM servers WHERE id = ? AND passkey = ?");
 $query->execute(array($result->uid, sha1($result->key)));
 
